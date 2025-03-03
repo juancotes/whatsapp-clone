@@ -4,81 +4,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const sendBtn = document.getElementById("send-btn");
     const locationBtn = document.getElementById("location-btn");
 
-    const chatHistory = [];
-
     function appendMessage(text, sender) {
         let messageDiv = document.createElement("div");
-        messageDiv.classList.add("message", sender);
+        messageDiv.classList.add("message", sender); // Aplica clase "message" y "user" o "bot"
         messageDiv.innerText = text;
         chatBody.appendChild(messageDiv);
-        chatBody.scrollTop = chatBody.scrollHeight;
-        chatHistory.push({ text, sender });
+        chatBody.scrollTop = chatBody.scrollHeight; // Hace scroll automático al último mensaje
     }
 
-    function sendMessageToBot(message, latitude = null, longitude = null) {
-        const userId = "user-123";  
-        const endpoint = "https://geobottwilio.onrender.com/consultas-generales"; 
+    function sendMessageToBot(message) {
+        appendMessage(message, "user");  // Agrega el mensaje del usuario en la interfaz
 
-        const payload = JSON.stringify(
-            latitude && longitude
-                ? { user_id: userId, message, latitude, longitude }
-                : { user_id: userId, message }
-        );
-
-        console.log("📤 Enviando mensaje a Render:", payload);  // Debugging
-
-        fetch(endpoint, {
+        fetch("https://geobottwilio.onrender.com/consultas-generales", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: payload
+            body: JSON.stringify({ user_id: "user-123", message })
         })
         .then(response => response.json())
-        .then(data => {
-            console.log("✅ Respuesta de Render:", data);
-            appendMessage(data.reply, "bot");
-        })
-        .catch(error => {
-            console.error("❌ Error al conectar con Render:", error);
-            appendMessage("Error al conectar con el bot", "bot");
-        });
-    }
-
-    function sendMessage() {
-        let message = messageInput.value.trim();
-        if (message) {
-            appendMessage(message, "user");
-            sendMessageToBot(message);
-            messageInput.value = "";
-        }
+        .then(data => appendMessage(data.reply, "bot")) // Agrega la respuesta del bot
+        .catch(() => appendMessage("Error al conectar con el bot", "bot"));
     }
 
     sendBtn.addEventListener("click", () => {
-        sendMessage();
+        let message = messageInput.value.trim();
+        if (message) {
+            sendMessageToBot(message);
+            messageInput.value = "";
+        }
     });
 
     messageInput.addEventListener("keypress", (event) => {
         if (event.key === "Enter") {
-            event.preventDefault();  // ⚠️ Evita que el formulario recargue la página
-            sendMessage();
+            event.preventDefault();
+            sendBtn.click();
         }
     });
 
-    locationBtn.addEventListener("click", () => {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                let locationMessage = `📍 Ubicación: https://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
-                appendMessage(locationMessage, "user");
-                sendMessageToBot(locationMessage, position.coords.latitude, position.coords.longitude);
-            }, () => {
-                appendMessage("No se pudo obtener la ubicación.", "bot");
-            });
-        } else {
-            appendMessage("La geolocalización no está soportada en este navegador.", "bot");
-        }
-    });
-
-    // Mensaje de bienvenida
     appendMessage("👋 ¡Hola! Escribe un mensaje para comenzar.", "bot");
 });
-
-
