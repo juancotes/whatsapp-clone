@@ -19,9 +19,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const userId = "user-123";  
         const endpoint = "https://geobottwilio.onrender.com/consultas-generales"; 
 
-        const payload = latitude && longitude
-            ? JSON.stringify({ user_id: userId, message, latitude, longitude })
-            : JSON.stringify({ user_id: userId, message });
+        const payload = JSON.stringify(
+            latitude && longitude
+                ? { user_id: userId, message, latitude, longitude }
+                : { user_id: userId, message }
+        );
+
+        console.log("📤 Enviando mensaje a Render:", payload);  // Debugging
 
         fetch(endpoint, {
             method: "POST",
@@ -29,21 +33,34 @@ document.addEventListener("DOMContentLoaded", () => {
             body: payload
         })
         .then(response => response.json())
-        .then(data => appendMessage(data.reply, "bot"))
-        .catch(() => appendMessage("Error al conectar con el bot", "bot"));
+        .then(data => {
+            console.log("✅ Respuesta de Render:", data);
+            appendMessage(data.reply, "bot");
+        })
+        .catch(error => {
+            console.error("❌ Error al conectar con Render:", error);
+            appendMessage("Error al conectar con el bot", "bot");
+        });
     }
 
-    sendBtn.addEventListener("click", () => {
+    function sendMessage() {
         let message = messageInput.value.trim();
         if (message) {
             appendMessage(message, "user");
             sendMessageToBot(message);
             messageInput.value = "";
         }
+    }
+
+    sendBtn.addEventListener("click", () => {
+        sendMessage();
     });
 
     messageInput.addEventListener("keypress", (event) => {
-        if (event.key === "Enter") sendBtn.click();
+        if (event.key === "Enter") {
+            event.preventDefault();  // ⚠️ Evita que el formulario recargue la página
+            sendMessage();
+        }
     });
 
     locationBtn.addEventListener("click", () => {
@@ -63,4 +80,5 @@ document.addEventListener("DOMContentLoaded", () => {
     // Mensaje de bienvenida
     appendMessage("👋 ¡Hola! Escribe un mensaje para comenzar.", "bot");
 });
+
 
