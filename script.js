@@ -40,5 +40,5 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    appendMessage("👋 ¡Hola! Escribe un mensaje para comenzar.", "bot");
+    appendMessage("👋 ¡Hola! Resuelvo preguntas sobre ordenamiento territorial en Colombia. Escribe un mensaje para iniciar.", "bot");
 });
