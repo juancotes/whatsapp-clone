@@ -44,34 +44,37 @@ body {
     height: calc(100vh - 120px);
 }
 
-/* 💬 Mensajes con burbujas estilo WhatsApp */
+/* 💬 Mensajes con burbujas tipo WhatsApp */
 .message {
-    max-width: 80%;
+    max-width: 75%;
     padding: 10px 15px;
     margin: 5px;
     border-radius: 15px;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.4;
     display: inline-block;
     word-wrap: break-word;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* Mensajes del usuario (derecha, verde) */
+/* 🟢 Mensajes del usuario (verde, alineados a la derecha) */
 .message.user {
     background: #dcf8c6;
     align-self: flex-end;
     text-align: right;
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 15px;
+    margin-right: 10px;
 }
 
-/* Mensajes del bot (izquierda, blanco) */
+/* 🟢 Mensajes del bot (blanco, alineados a la izquierda) */
 .message.bot {
     background: white;
     align-self: flex-start;
     text-align: left;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 15px;
+    margin-left: 10px;
 }
 
 /* 🟢 Pie del chat */
@@ -106,13 +109,19 @@ body {
 
 /* 📱🔹 Estilos para móviles */
 @media (max-width: 600px) {
+    .message {
+        max-width: 85%;
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
     .chat-footer {
         padding: 8px;
     }
 
     #message-input {
-        padding: 14px;
-        font-size: 18px;
+        padding: 12px;
+        font-size: 16px;
     }
 
     #send-btn {
